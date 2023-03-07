@@ -8,9 +8,9 @@ type currentMoneyType = {
     number: string
 }
 
-type NewComponentPropsType =  {
+type NewComponentPropsType = {
     currentMoney: Array<currentMoneyType>
-    onClickFilterHandler:  (banknote: FilterType) => void
+    onClickFilterHandler: (baNnknote: FilterType) => void
 }
 
 const NewComponent = (props: NewComponentPropsType) => {
@@ -23,17 +23,22 @@ const NewComponent = (props: NewComponentPropsType) => {
                             <span>  {item.banknote}</span>
                             <span>  {item.value}</span>
                             <span>  {item.number}</span>
+                            <span>
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam at earum facilis quasi ratione! Aspernatur blanditiis dolorum et explicabo facere neque sunt tempora voluptate! Cum dolore id quidem repellendus voluptatum.
+                            </span>
+
                         </li>
                     )
                 })}
             </ul>
             <div>
-                <Button name={'Ruble'} callBack={()=>props.onClickFilterHandler('ruble')}/>
-                <Button name={'Dollars'} callBack={()=>props.onClickFilterHandler('Dollars')}/>
-                <Button name={'all'} callBack={()=>props.onClickFilterHandler('all')}/>
+                <Button name={'Ruble'} callBack={() => props.onClickFilterHandler('ruble')}/>
+                <Button name={'Dollars'} callBack={() => props.onClickFilterHandler('Dollars')}/>
+                <Button name={'all'} callBack={() => props.onClickFilterHandler('all')}/>
             </div>
         </>
     );
 };
+
 
 export default NewComponent;
