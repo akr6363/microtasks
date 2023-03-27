@@ -1,101 +1,115 @@
 import React, {useState} from 'react';
 import './App.css';
-import StudentsList from "./components/StudentsList";
-import TopCarsList from "./components/TopCarsList";
-import {Button} from "./components/Button";
-import {clearLine} from "readline";
-import NewComponent from "./components/NewComponent";
+import {Todolist} from './Todolist';
+import {v1} from 'uuid';
 
-export type FilterType  = 'all' | 'ruble' | 'Dollars'
+export type FilterValuesType = "all" | "active" | "completed";
+
+
+export type todolistsType = {
+    id: string
+    title: string
+    filter: FilterValuesType
+}
+
+export type TaskType = {
+    id: string
+    title: string
+    isDone: boolean
+}
+
 
 function App() {
 
-    const students = [
-        {id: 1, name: "James", age: 8},
-        {id: 2, name: "Robert", age: 18},
-        {id: 3, name: "John", age: 28},
-        {id: 4, name: "Michael", age: 38},
-        {id: 5, name: "William", age: 48},
-        {id: 6, name: "David", age: 58},
-        {id: 7, name: "Richard", age: 68},
-        {id: 8, name: "Joseph", age: 78},
-        {id: 9, name: "Thomas", age: 88},
-        {id: 10, name: "Charles", age: 98},
-        {id: 11, name: "Christopher", age: 100},
-    ]
+    // let [tasks, setTasks] = useState([
+    //     {id: v1(), title: "HTML&CSS", isDone: true},
+    //     {id: v1(), title: "JS", isDone: true},
+    //     {id: v1(), title: "ReactJS", isDone: false},
+    //     {id: v1(), title: "Rest API", isDone: false},
+    //     {id: v1(), title: "GraphQL", isDone: false},
+    // ]);
+    // let [filter, setFilter] = useState<FilterValuesType>("all");
 
-    const topCars = [
-        {manufacturer: 'BMW', model: 'm5cs'},
-        {manufacturer: 'Mercedes', model: 'e63s'},
-        {manufacturer: 'Audi', model: 'rs6'}
-    ]
+    let todolistID1 = v1();
+    let todolistID2 = v1();
 
-    const Button1Foo = (name: string, age: number) => {
-        console.log(`Im ${name} age: ${age}`)
-    }
-
-    const Button2Foo = (name: string) => {
-        console.log(`Im ${name}`)
-    }
-
-    const Button3Foo = () => {
-        console.log('I am stupid button')
-    }
-
-    let [a, setA] = useState(1)
-
-    const onClickHandler = () => {
-        setA(++a)
-        console.log(a)
-    }
-
-    const onClickHandler2 = () => {
-        setA(a = 0)
-        console.log(a)
-    }
-
-    const [money, setMoney] = useState([
-        {banknote: 'Dollars', value: 100, number: ' a1234567890'},
-        {banknote: 'Dollars', value: 50, number: ' z1234567890'},
-        {banknote: 'ruble', value: 100, number: ' w1234567890'},
-        {banknote: 'Dollars', value: 100, number: ' e1234567890'},
-        {banknote: 'Dollars', value: 50, number: ' c1234567890'},
-        {banknote: 'ruble', value: 100, number: ' r1234567890'},
-        {banknote: 'Dollars', value: 50, number: ' x1234567890'},
-        {banknote: 'ruble', value: 50, number: ' v1234567890'},
+    let [todolists, setTodolists] = useState<Array<todolistsType>>([
+        {id: todolistID1, title: 'What to learn', filter: 'all'},
+        {id: todolistID2, title: 'What to buy', filter: 'all'},
     ])
 
-    let [nameBtn, setNameBtn] = useState<FilterType>('all')
+    let [tasks, setTasks] = useState({
+        [todolistID1]: [
+            {id: v1(), title: "HTML&CSS", isDone: true},
+            {id: v1(), title: "JS", isDone: true},
+            {id: v1(), title: "ReactJS", isDone: false},
+            {id: v1(), title: "Rest API", isDone: false},
+            {id: v1(), title: "GraphQL", isDone: false},
+        ],
+        [todolistID2]: [
+            {id: v1(), title: "HTML&CSS2", isDone: true},
+            {id: v1(), title: "JS2", isDone: true},
+            {id: v1(), title: "ReactJS2", isDone: false},
+            {id: v1(), title: "Rest API2", isDone: false},
+            {id: v1(), title: "GraphQL2", isDone: false},
+        ]
+    });
 
-    let currentMoney = money
-    if (nameBtn === 'ruble') {
-        currentMoney = money.filter((el) => el.banknote === 'ruble')
-    }
-    if (nameBtn === 'Dollars') {
-        currentMoney = money.filter((el) => el.banknote === 'Dollars')
+
+    function removeTask(taskId: string, todoListId: string) {
+        let filteredTasks = tasks[todoListId].filter(t => t.id != taskId);
+        setTasks({...tasks, [todoListId]: filteredTasks});
     }
 
-    const onClickFilterHandler = (banknote: FilterType) => {
-       setNameBtn(banknote)
+    function addTask(title: string, todoListId: string) {
+        let task = {id: v1(), title: title, isDone: false};
+        let newTasks = [task, ...tasks[todoListId]];
+        setTasks({...tasks, [todoListId]: newTasks});
     }
+
+    function changeStatus(taskId: string, isDone: boolean, todoListId: string) {
+        let newTasks = tasks[todoListId]
+            .map((task) => task.id === taskId ? {...task, isDone: isDone} : task)
+        setTasks({...tasks, [todoListId]: newTasks});
+    }
+
+    function sortTasks(tasks: TaskType[], filter: FilterValuesType) {
+        switch (filter) {
+            case 'active':
+                return tasks.filter(t => !t.isDone)
+
+            case 'completed':
+                return tasks.filter(t => t.isDone)
+            default:
+                return tasks
+        }
+    }
+
+
+    function changeFilter(value: FilterValuesType, todoListId: string) {
+        setTodolists(todolists
+            .map(tl => tl.id === todoListId ? {...tl, filter: value} : tl))
+
+    }
+
 
     return (
+        <div className="App">
+            {todolists.map((tl) => {
+                return (
+                    <Todolist id={tl.id}
+                        title={tl.title}
+                              tasks={sortTasks(tasks[tl.id], tl.filter)}
+                              removeTask={removeTask}
+                              changeFilter={changeFilter}
+                              addTask={addTask}
+                              changeTaskStatus={changeStatus}
+                              filter={tl.filter}/>
+                )
+            })}
 
-        <>
-            {/*<StudentsList students={students}/>*/}
-            {/*<TopCarsList cars = {topCars}/>*/}
-
-            {/*<Button name={'MyYouTubeChanel - 1'} callBack={() => Button1Foo('Vasya', 21)}/>*/}
-            {/*<Button name={'MyYouTubeChanel - 2'} callBack={() => Button2Foo('Petya')}/>*/}
-            {/*<Button name={'Button'} callBack={Button3Foo}/>*/}
-
-            {/*<h1>{a}</h1>*/}
-            {/*<button onClick={onClickHandler}>number</button>*/}
-            {/*<button onClick={onClickHandler2}>0</button>*/}
-
-            <NewComponent currentMoney = {currentMoney} onClickFilterHandler={onClickFilterHandler}/>
-        </>
-    )
+        </div>
+    );
 }
 
 export default App;
